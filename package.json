@@ -1,0 +1,42 @@
+{
+  "name": "waveform-path",
+  "version": "0.0.2",
+  "description": "Generator waveform paths for SVG",
+  "files": ["dist"],
+  "main": "./dist/waveform-path.umd.js",
+  "module": "./dist/waveform-path.es.js",
+  "exports": {
+    ".": {
+      "import": "./dist/waveform-path.es.js",
+      "require": "./dist/waveform-path.umd.js"
+    }
+  },
+  "scripts": {
+    "dev": "vite --host",
+    "build": "vite build && cp dist/waveform-path.es.js docs/waveform-path.min.js",
+    "preview": "vite preview"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jerosoler/waveform-path.git"
+  },
+  "keywords": [
+    "waveform",
+    "path",
+    "svg",
+    "audio-visualizer",
+    "audio",
+    "webaudio",
+    "audio-player",
+    "music"
+  ],
+  "author": "Jero Soler",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/jerosoler/waveform-path/issues"
+  },
+  "homepage": "https://github.com/jerosoler/waveform-path#readme",
+  "devDependencies": {
+    "vite": "^5.4.9"
+  }
+}

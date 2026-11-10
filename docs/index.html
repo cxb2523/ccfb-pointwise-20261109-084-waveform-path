@@ -1,0 +1,893 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🎙</text></svg>">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Waveform-path - Generator waveform paths for SVG</title>
+    <meta name="description" content="Generator waveform paths for SVG">
+    <meta name="author" content="Jero Soler">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.20.0/themes/prism.min.css" integrity="sha256-cuvic28gVvjQIo3Q4hnRpQSNB0aMw3C+kjkR0i+hrWg=" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.20.0/themes/prism-tomorrow.min.css" integrity="sha256-xevuwyBEb2ZYh4nDhj0g3Z/rDBnM569hg9Vq6gEw/Sg=" crossorigin="anonymous">
+    <link href="style.css" rel="stylesheet">
+</head>
+<body>
+
+    <header id="header">
+        <h1 class="logo">waveform-path</h1>
+        <svg id="logo" height="140" width="800">
+            <defs>
+                <linearGradient id="logograd" x1="0%" y1="50%" x2="100%" y2="50%" >
+                    <stop offset="0%" style="stop-color:rgb(0,255,10);stop-opacity:1.00" />
+                    <stop offset="25%" style="stop-color:rgb(0,188,212);stop-opacity:0.70" />
+                    <stop offset="50%" style="stop-color:rgb(238,130,238);stop-opacity:1.00" />
+                    <stop offset="75%" style="stop-color:rgb(103,58,183);stop-opacity:0.70" />
+                    <stop offset="100%" style="stop-color:rgb(233,30,99);stop-opacity:1.00" />
+                </linearGradient>
+            </defs>
+            <path stroke-width="3px" fill="none" stroke="url(#logograd)" d="" />
+        </svg>
+    </header>
+    <div class="wrapper">
+        <nav>
+            <a href="#about">About</a>
+            <a href="#examples">Examples</a>
+            <a href="#install">Install</a>
+            <a href="#howtouse">How to use</a>
+            <a href="https://github.com/jerosoler/waveform-path" target="_blank">Github</a>
+        </nav>
+        <h3 id="about">About</h3>
+        <p>Reading CSS-Tricks i discovered the <a href="https://css-tricks.com/making-an-audio-waveform-visualizer-with-vanilla-javascript/" target="_blank">post</a> of <a href="https://twitter.com/ilikescience" target="_blank">Matthew Ström</a> on how to create a waveform which helped me create the library. Look for similar libraries to create custom waveforms. But almost all of them had the same type of wave and based on canvas and not on svg.</p>
+        <p>I think svg allows us a lot of customization with css filters or gradients or just lossless scaling. We can also store a path on the server and then retrieve it.</p>
+        <p>With the library we can create 2 types of waveforms <strong>linear</strong> and <strong>polar</strong>. I each method has 3 different types <strong>steps</strong>, <strong>mirror</strong> and <strong>bars</strong>.</p>
+
+        <h3 id="examples">Examples</h3>
+
+        <p>All examples are made with this audio and processed in the browser.</p>
+        <audio controls>
+            <source src="hello_world.ogg" type="audio/ogg">
+          Your browser does not support the audio element.
+        </audio>
+        
+        <div class="examples">
+            <h1>Linear</h1>
+            <svg id="example1" height="140px" width="800px">
+                <defs>
+                    <linearGradient id="lgrad" x1="0%" y1="50%" x2="100%" y2="50%" >
+                        <stop offset="0%" style="stop-color:rgb(0,255,10);stop-opacity:1.00" />
+                        <stop offset="25%" style="stop-color:rgb(0,188,212);stop-opacity:0.70" />
+                        <stop offset="50%" style="stop-color:rgb(238,130,238);stop-opacity:1.00" />
+                        <stop offset="75%" style="stop-color:rgb(103,58,183);stop-opacity:0.70" />
+                        <stop offset="100%" style="stop-color:rgb(233,30,99);stop-opacity:1.00" />
+                    </linearGradient>
+                </defs>
+                <path style="fill:none; stroke-width: 3px; stroke:url(#lgrad)" />
+            </svg>
+            <details>
+                <summary>View Options</summary>
+                <pre><code class="language-javascript">{ 
+    samples: 100, type: 'steps', top: 20,
+    paths: [ 
+        {d:'L', sx: 0, sy:0, ex:50, ey:100 },
+        {d:'L', sx: 50, sy:100, ex:100, ey:0 }
+    ]
+}</code></pre>
+            </details>
+
+            <svg id="example2" height="140px" width="800px">
+                <path style="fill:none; stroke-width: 4px;  stroke-linecap: round; stroke:url(#lgrad)"/>
+            </svg>
+            <details>
+                <summary>View Options</summary>
+                <pre><code class="language-javascript">{ 
+    samples: 100, type: 'mirror', top: 20, 
+    paths: [ 
+        {d:'V', sy: 0, x:50, ey:100 }
+    ]
+}</code></pre>
+            </details>
+
+            <svg id="example3" height="140px" width="800px">
+                <path style="fill:none; stroke-width: 3px;  stroke-linecap: round; stroke:url(#lgrad)"/>
+            </svg>
+            <details>
+                <summary>View Options</summary>
+                <pre><code class="language-javascript">{ 
+    samples: 100,  type: 'steps', normalize: true, top: 20,
+}</code></pre>
+            </details>
+
+            <svg id="example4" height="140px" width="800px">
+                <path style="stroke:url(#lgrad); stroke-width: 2px;  fill:url(#lgrad)"/>
+            </svg>
+            <details>
+                <summary>View Options</summary>
+                <pre><code class="language-javascript">{ 
+    samples: 100, type: 'mirror', top: 20,
+    paths: [
+        {d:'Q', sx: 20, sy:0, x: 50, y: 100, ex:80, ey:0}
+    ],
+}</code></pre>
+            </details>
+
+            <svg id="example5" height="140px" width="800px">
+                <path style="stroke:none; stroke-width: 0px;  fill:url(#lgrad)"/>
+            </svg>
+            <details>
+                <summary>View Options</summary>
+                <pre><code class="language-javascript">{ 
+    samples: 75, type: 'mirror', top: 20,
+    paths: [
+        //Five
+        {d:'A', sx: 35, sy:85,  ex:65, ey:85, rx:10, ry: 10, angle: 180, arc: 1, sweep: 1, minshow: 0.8, maxshow: 1, normalize: true},  
+        {d:'A', sx: 35, sy:85,  ex:65, ey:85, rx:10, ry: 10, angle: 180, arc: 1, sweep: 0, minshow: 0.8, maxshow: 1, normalize: true},
+
+        {d:'A', sx: 30, sy:70,  ex:70, ey:70, rx:20, ry: 20, angle: 180, arc: 1, sweep: 1, minshow: 0.8, maxshow: 1, normalize: true},
+        {d:'A', sx: 30, sy:70,  ex:70, ey:70, rx:20, ry: 20, angle: 180, arc: 1, sweep: 0, minshow: 0.8, maxshow: 1, normalize: true},
+
+        {d:'A', sx: 25, sy:55,  ex:75, ey:55, rx:20, ry: 20, angle: 180, arc: 1, sweep: 1, minshow: 0.8, maxshow: 1, normalize: true},
+        {d:'A', sx: 25, sy:55,  ex:75, ey:55, rx:20, ry: 20, angle: 180, arc: 1, sweep: 0, minshow: 0.8, maxshow: 1, normalize: true},
+
+        {d:'A', sx: 20, sy:40,  ex:80, ey:40, rx:20, ry: 20, angle: 180, arc: 1, sweep: 1, minshow: 0.8, maxshow: 1, normalize: true},
+        {d:'A', sx: 20, sy:40,  ex:80, ey:40, rx:20, ry: 20, angle: 180, arc: 1, sweep: 0, minshow: 0.8, maxshow: 1, normalize: true},
+
+        {d:'A', sx: 15, sy:20,  ex:85, ey:20, rx:20, ry: 20, angle: 180, arc: 1, sweep: 1, minshow: 0.8, maxshow: 1, normalize: true},
+        {d:'A', sx: 15, sy:20,  ex:85, ey:20, rx:20, ry: 20, angle: 180, arc: 1, sweep: 0, minshow: 0.8, maxshow: 1, normalize: true},
+
+        {d:'A', sx: 10, sy:0,  ex:90, ey:0, rx:20, ry: 20, angle: 180, arc: 1, sweep: 1, minshow: 0.8, maxshow: 1, normalize: true},
+        {d:'A', sx: 10, sy:0,  ex:90, ey:0, rx:20, ry: 20, angle: 180, arc: 1, sweep: 0, minshow: 0.8, maxshow: 1, normalize: true},
+
+        //Four
+        {d:'A', sx: 30, sy:70,  ex:70, ey:70, rx:20, ry: 20, angle: 180, arc: 1, sweep: 1, minshow: 0.6, maxshow: 0.8, normalize: true },
+        {d:'A', sx: 30, sy:70,  ex:70, ey:70, rx:20, ry: 20, angle: 180, arc: 1, sweep: 0, minshow: 0.6, maxshow: 0.8, normalize: true },
+
+        {d:'A', sx: 25, sy:55,  ex:75, ey:55, rx:20, ry: 20, angle: 180, arc: 1, sweep: 1, minshow: 0.6, maxshow: 0.8, normalize: true },
+        {d:'A', sx: 25, sy:55,  ex:75, ey:55, rx:20, ry: 20, angle: 180, arc: 1, sweep: 0, minshow: 0.6, maxshow: 0.8, normalize: true },
+
+        {d:'A', sx: 20, sy:40,  ex:80, ey:40, rx:20, ry: 20, angle: 180, arc: 1, sweep: 1, minshow: 0.6, maxshow: 0.8, normalize: true },
+        {d:'A', sx: 20, sy:40,  ex:80, ey:40, rx:20, ry: 20, angle: 180, arc: 1, sweep: 0, minshow: 0.6, maxshow: 0.8, normalize: true },
+
+        {d:'A', sx: 15, sy:20,  ex:85, ey:20, rx:20, ry: 20, angle: 180, arc: 1, sweep: 1, minshow: 0.6, maxshow: 0.8, normalize: true },
+        {d:'A', sx: 15, sy:20,  ex:85, ey:20, rx:20, ry: 20, angle: 180, arc: 1, sweep: 0, minshow: 0.6, maxshow: 0.8, normalize: true },
+
+        {d:'A', sx: 10, sy:0,  ex:90, ey:0, rx:20, ry: 20, angle: 180, arc: 1, sweep: 1, minshow: 0.6, maxshow: 0.8, normalize: true },
+        {d:'A', sx: 10, sy:0,  ex:90, ey:0, rx:20, ry: 20, angle: 180, arc: 1, sweep: 0, minshow: 0.6, maxshow: 0.8, normalize: true },
+
+        //Three
+        {d:'A', sx: 20, sy:40,  ex:80, ey:40, rx:20, ry: 20, angle: 180, arc: 1, sweep: 1, minshow: 0.4, maxshow: 0.6, normalize: true },
+        {d:'A', sx: 20, sy:40,  ex:80, ey:40, rx:20, ry: 20, angle: 180, arc: 1, sweep: 0, minshow: 0.4, maxshow: 0.6, normalize: true },
+
+        {d:'A', sx: 15, sy:20,  ex:85, ey:20, rx:20, ry: 20, angle: 180, arc: 1, sweep: 1, minshow: 0.4, maxshow: 0.6, normalize: true },
+        {d:'A', sx: 15, sy:20,  ex:85, ey:20, rx:20, ry: 20, angle: 180, arc: 1, sweep: 0, minshow: 0.4, maxshow: 0.6, normalize: true },
+
+        {d:'A', sx: 10, sy:0,  ex:90, ey:0, rx:20, ry: 20, angle: 180, arc: 1, sweep: 1, minshow: 0.4, maxshow: 0.6, normalize: true },
+        {d:'A', sx: 10, sy:0,  ex:90, ey:0, rx:20, ry: 20, angle: 180, arc: 1, sweep: 0, minshow: 0.4, maxshow: 0.6, normalize: true },
+
+        //Two
+        {d:'A', sx: 15, sy:20,  ex:85, ey:20, rx:20, ry: 20, angle: 180, arc: 1, sweep: 1, minshow: 0.2, maxshow: 0.4, normalize: true },
+        {d:'A', sx: 15, sy:20,  ex:85, ey:20, rx:20, ry: 20, angle: 180, arc: 1, sweep: 0, minshow: 0.2, maxshow: 0.4, normalize: true },
+
+        {d:'A', sx: 10, sy:0,  ex:90, ey:0, rx:20, ry: 20, angle: 180, arc: 1, sweep: 1, minshow: 0.2, maxshow: 0.4, normalize: true },
+        {d:'A', sx: 10, sy:0,  ex:90, ey:0, rx:20, ry: 20, angle: 180, arc: 1, sweep: 0, minshow: 0.2, maxshow: 0.4, normalize: true },
+
+        //One
+        {d:'A', sx: 25, sy:0,  ex:75, ey:0, rx:20, ry: 20, angle: 180, arc: 1, sweep: 1, minshow: 0, maxshow: 0.2, normalize: true },
+        {d:'A', sx: 25, sy:0,  ex:75, ey:0, rx:20, ry: 20, angle: 180, arc: 1, sweep: 0, minshow: 0, maxshow: 0.2, normalize: true },
+        
+    ],
+}</code></pre>
+        </details>
+
+        <svg id="example6" height="140px" width="800px">
+            <path style="stroke:url(#lgrad); stroke-width: 3px;  fill:none"/>
+        </svg>
+        <details>
+            <summary>View Options</summary>
+            <pre><code class="language-javascript">{ 
+    samples: 50,  type: 'steps',  top: 20,
+    paths: [
+        {d:'V', sy:0, x:0, ey:100, },
+        {d:'A', sx: 0, sy:100,  ex:100, ey:100, rx:10, ry: 10, angle: 180, arc: 1, sweep: 1},  
+        {d:'V', sy:0, x:100, ey:100, },
+    ],
+}</code></pre>
+        </details>
+
+        <svg id="example7" height="140px" width="800px">
+            <path style="stroke:url(#lgrad); stroke-width: 3px;  fill:url(#lgrad)"/>
+        </svg>
+        <details>
+            <summary>View Options</summary>
+            <pre><code class="language-javascript">{ 
+    samples: 100, type: 'steps', top: 20,
+    paths: [
+        {d:'V', sy:0, x:0, ey:100, },
+        {d:'A', sx: 0, sy:100,  ex:100, ey:100, rx:10, ry: 10, angle: 180, arc: 1, sweep: 1},  
+        {d:'V', sy:100, x:100, ey:0, },
+        {d:'A', sx: 100, sy:0,  ex:0, ey:0, rx:10, ry: 10, angle: 180, arc: 1, sweep: 0},
+    ],
+}</code></pre>
+        </details>
+
+        <svg id="example8" height="140px" width="800px">
+            <path style="fill:none; stroke-width: 4px;  stroke-linecap: round; stroke:url(#lgrad)"/>
+        </svg>
+        <details>
+            <summary>View Options</summary>
+            <pre><code class="language-javascript">{ 
+    samples: 100, type: 'bars', top: 20, 
+    paths: [ 
+        {d:'V', sy: 0, x:50, ey:100 }
+    ]
+}</code></pre>
+        </details>
+
+        <svg id="example9" height="140px" width="800px">
+            <path style="fill:none; stroke-width: 3;  stroke:url(#lgrad)"/>
+        </svg>
+        <details>
+            <summary>View Options</summary>
+            <pre><code class="language-javascript">{ 
+    samples: 75, type: 'mirror', top: 20, 
+    paths: [ 
+        {d:'L', sx: 0, sy:20, ex:100, ey:-1.5, normalize: true, minshow: 0, maxshow: 1 },
+        {d:'L', sx: -100, sy:40, ex:0, ey:20, normalize: true, minshow: 0.20, maxshow: 1 },
+        {d:'L', sx: -200, sy:60, ex:-100, ey:40, normalize: true, minshow: 0.40, maxshow: 1 },
+        {d:'L', sx: -300, sy:80, ex:-200, ey:60, normalize: true, minshow: 0.60, maxshow: 1 },
+        {d:'L', sx: -400, sy:100, ex:-300, ey:80, normalize: true, minshow: 0.80, maxshow: 1 }
+    ]
+}</code></pre>
+        </details>
+
+        <svg id="example10" height="140px" width="800px">
+            <path style="fill:none; stroke-width: 3;  stroke:url(#lgrad)" >
+                <animate
+                attributeName="d"
+                dur="2.54s"
+                repeatCount="indefinite"
+                calcMode="linear"
+                values=""
+            />
+            </path>
+        </svg>
+        <details>
+            <summary>View Options</summary>
+            <pre><code class="language-javascript">{ 
+    samples: 100, type: 'steps', top: 20, animation: true
+}</code></pre>
+        </details>
+
+        <svg id="example11" height="140px" width="800px">
+            <path style="fill:none; stroke-width: 3;  stroke:url(#lgrad)" >
+                <animate
+                attributeName="d"
+                dur="2.54s"
+                repeatCount="indefinite"
+                calcMode="linear"
+                values=""
+            />
+            </path>
+        </svg>
+        <details>
+            <summary>View Options</summary>
+            <pre><code class="language-javascript">{ 
+    samples: 100, type: 'bars', top: 20, animation: true,
+    paths: [ 
+        {d:'V', sy: 0, x:50, ey:100 }
+    ]
+}</code></pre>
+        </details>
+        
+        <h1>Polar</h1>
+        <svg class="round" id="example12" height="400px" width="400px">
+            <defs>
+                <radialGradient id="rgrad" cx="50%" cy="50%" r="50%" >
+                 
+                         <stop offset="0%" style="stop-color:rgb(0,255,10);stop-opacity:1.00" />
+                         <stop offset="25%" style="stop-color:rgb(0,188,212);stop-opacity:0.70" />
+                         <stop offset="50%" style="stop-color:rgb(238,130,238);stop-opacity:1.00" />
+                         <stop offset="75%" style="stop-color:rgb(103,58,183);stop-opacity:0.70" />
+                         <stop offset="100%" style="stop-color:rgb(233,30,99);stop-opacity:1.00" />
+             
+                 </radialGradient>
+               </defs>
+            <path style=" stroke:url(#rgrad); stroke-width: 2px; fill: none;"/>
+        </svg>
+        <details>
+            <summary>View Options</summary>
+            <pre><code class="language-javascript">{ 
+    samples: 90, type: 'steps',
+    left: 200, top: 200, distance: 100, length: 50
+}</code></pre>
+        </details>
+
+        <svg class="round" id="example13" height="400px" width="400px">
+            <path style=" stroke:url(#rgrad); stroke-width: 5px; fill: none; stroke-linecap: round;"/>
+        </svg>
+        <details>
+            <summary>View Options</summary>
+            <pre><code class="language-javascript">{ 
+    samples: 90, type: 'bars',
+    left: 200, top: 200, distance: 100, length: 50,
+    paths: [
+        {d: 'L', sdeg:50, sr:0, edeg: 50, er:100 },
+    ]
+}</code></pre>
+        </details>
+
+        <svg class="round" id="example14" height="400px" width="400px">
+            <path style=" stroke:url(#rgrad); stroke-width: 2px; fill: url(#rgrad); "/>
+        </svg>
+        <details>
+            <summary>View Options</summary>
+            <pre><code class="language-javascript">{ 
+    samples: 90, type: 'mirror',
+    left: 200, top: 200, distance: 100, length: 100
+}</code></pre>
+        </details>
+
+
+        <svg class="round" id="example15" height="400px" width="400px">
+            <path style=" stroke:url(#rgrad); stroke-width: 2px; fill: none; "/>
+        </svg>
+        <details>
+            <summary>View Options</summary>
+            <pre><code class="language-javascript">{ 
+    samples: 90, type: 'steps',
+    left: 200, top: 200, distance: 100, length: 100,
+    startdeg: 270, enddeg: 90,
+    invertdeg: true,
+    invertpath: true
+}</code></pre>
+        </details>
+
+        <svg class="round" id="example16" height="400px" width="400px">
+            <path style=" stroke:url(#rgrad); stroke-width: 2px; fill: none; "/>
+        </svg>
+        <details>
+            <summary>View Options</summary>
+            <pre><code class="language-javascript">{ 
+    samples: 90, type: 'steps',
+    left: 200, top: 200, distance: 100, length: 100,
+    paths: [
+        {d:'L', sdeg:0, sr:0,  edeg:0, er:90 },
+        {d:'A', sdeg:0, sr:90, edeg: 100, er:90, rx: 5, ry: 5, angle: 100, arc: 1, sweep: 1 },
+        {d:'L', sdeg:100, sr:90,  edeg:100, er:0 },
+    ]
+}</code></pre>
+        </details>
+
+
+        <svg class="round" id="example17" height="400px" width="400px">
+            <path style=" stroke:url(#rgrad); stroke-width: 2px; fill: none; ">
+                <animate
+                attributeName="d"
+                dur="2.54s"
+                repeatCount="indefinite"
+                calcMode="linear"
+                values=""
+            />
+            </path>
+        </svg>
+        <details>
+            <summary>View Options</summary>
+            <pre><code class="language-javascript">{ 
+    samples: 90, type: 'steps',
+    left: 200, top: 200, distance: 100, length: 100,
+    animation: true
+}</code></pre>
+        </details>
+
+
+        <svg class="round" id="example18" height="400px" width="400px">
+            <path style=" stroke:url(#rgrad); stroke-width: 2px; fill: none; ">
+                <animate
+                attributeName="d"
+                dur="2.54s"
+                repeatCount="indefinite"
+                calcMode="linear"
+                values=""
+            />
+            </path>
+        </svg>
+        <details>
+            <summary>View Options</summary>
+            <pre><code class="language-javascript">{ 
+    samples: 90, type: 'steps',
+    left: 200, top: 200, distance: 100, length: 100,
+    animation: true,
+    paths: [
+        {d:'L', sdeg:0, sr:0,  edeg:0, er:90 },
+        {d:'A', sdeg:0, sr:90, edeg: 100, er:90, rx: 5, ry: 5, angle: 100, arc: 1, sweep: 1 },
+        {d:'L', sdeg:100, sr:90,  edeg:100, er:0 },
+    ]
+}</code></pre>
+        </details>
+
+        <h1>Test with Microphone</h1>
+
+        <svg id="Mic1" height="140px" width="800px">
+            <path style="fill:none; stroke-width: 4px;  stroke-linecap: round; stroke:url(#lgrad)"/>
+        </svg>
+    
+
+        <button id="startmic">Start</button>
+
+        <svg class="round" id="Mic2" height="400px" width="400px">
+            <path style=" stroke:url(#rgrad); stroke-width: 2px; fill: none; "/>
+        </svg>
+    
+
+
+        </div>
+
+        <h3 id="install">Install</h3>
+        <h4>NPM</h4>
+        <div class="codebox" data-ioaa-animation="animateLeft">
+                <div class="preheader">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="54" height="14" viewBox="0 0 54 14"><g fill="none" fill-rule="evenodd" transform="translate(1 1)"><circle cx="6" cy="6" r="6" fill="#FF5F56" stroke="#E0443E" stroke-width=".5"></circle><circle cx="26" cy="6" r="6" fill="#FFBD2E" stroke="#DEA123" stroke-width=".5"></circle><circle cx="46" cy="6" r="6" fill="#27C93F" stroke="#1AAB29" stroke-width=".5"></circle></g></svg>
+                </div>
+                <pre><code class="language-bash">npm install waveform-path -s</code></pre>
+        </div>
+        <h4>Download</h4>
+        <p>Download the last realease of <a target="_blank" href="https://github.com/jerosoler/waveform-path">repo</a> and copy <strong>waveform-path.min.js</strong> from dist folder.</p>
+
+        <h3 id="howtouse">How to use</h3>
+        <p>This example is the waveform of the logo of this website.</p>
+        <div class="codebox" >
+            <div class="preheader">
+                <svg xmlns="http://www.w3.org/2000/svg" width="54" height="14" viewBox="0 0 54 14"><g fill="none" fill-rule="evenodd" transform="translate(1 1)"><circle cx="6" cy="6" r="6" fill="#FF5F56" stroke="#E0443E" stroke-width=".5"></circle><circle cx="26" cy="6" r="6" fill="#FFBD2E" stroke="#DEA123" stroke-width=".5"></circle><circle cx="46" cy="6" r="6" fill="#27C93F" stroke="#1AAB29" stroke-width=".5"></circle></g></svg>
+            </div>
+            <pre><code class="language-html"><xmp><script type="module">
+                import { getAudioData, linearPath, polarPath } from "waveform-path";
+            
+                async function AudioPath(file) {
+                    const audioData = await getAudioData(file);
+            
+                    const pathLogo = linearPath(audioData,{ samples: 100,  type: 'steps', top: 20 });
+                    document.querySelector("#logo path").setAttribute('d', pathLogo);
+            
+                }
+                AudioPath("hello_world.ogg");
+</script></xmp></code></pre>
+        </div>
+
+        <h4>Linear Options</h4>
+
+        <table >
+            <thead>
+                <th>
+                    Option
+                </th>
+                <th>
+                    Default
+                </th>
+                <th>
+                    Description
+                </th>
+            </thead>
+            <tr>
+                <td>
+                    channel
+                </td>
+                <td>
+                    0
+                </td>
+                <td>
+                    Channel audio for generate wave
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    samples
+                </td>
+                <td>
+                    length
+                </td>
+                <td>
+                    Length of the data
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    height
+                </td>
+                <td>
+                    100
+                </td>
+                <td>
+                    Height of path 
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    width
+                </td>
+                <td>
+                    800
+                </td>
+                <td>
+                    Width of path 
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    top
+                </td>
+                <td>
+                    0
+                </td>
+                <td>
+                    Top margin from path to svg
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    left
+                </td>
+                <td>
+                    0
+                </td>
+                <td>
+                    Left margin from path to svg
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    type
+                </td>
+                <td>
+                    'steps'
+                </td>
+                <td>
+                    'steps', 'mirror' or 'bars'
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    paths
+                </td>
+                <td>
+                    [{d:'Q', sx: 0, sy:0, x: 50, y: 100, ex:100, ey:0}]
+                </td>
+                <td>
+                    Array of commands to create the path.
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    animation
+                </td>
+                <td>
+                    false
+                </td>
+                <td>
+                    To create animations, paths separated by commas
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    animationframes
+                </td>
+                <td>
+                    10
+                </td>
+                <td>
+                    Frames per second of the animation
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    normalize
+                </td>
+                <td>
+                    true
+                </td>
+                <td>
+                    Normalize audio to adjust waveform
+                </td>
+            </tr>
+        </table>
+        <br>
+        <h4>Linear Path Options</h4>
+
+        <div class="codebox" >
+            <div class="preheader">
+                <svg xmlns="http://www.w3.org/2000/svg" width="54" height="14" viewBox="0 0 54 14"><g fill="none" fill-rule="evenodd" transform="translate(1 1)"><circle cx="6" cy="6" r="6" fill="#FF5F56" stroke="#E0443E" stroke-width=".5"></circle><circle cx="26" cy="6" r="6" fill="#FFBD2E" stroke="#DEA123" stroke-width=".5"></circle><circle cx="46" cy="6" r="6" fill="#27C93F" stroke="#1AAB29" stroke-width=".5"></circle></g></svg>
+            </div>
+            <pre><code class="language-javascript">
+<xmp>// Lineto
+{d:'L', sx: 0, sy:0, ex:50, ey:100 }
+
+// Horitzontal
+{d:'H', sx:10, y:90, ex:90}
+
+// Vertical
+{d:'V', sy:0, x:0, ey:100}
+
+// Cubic Bézier Curve - Not 100%
+{d:'C', sx: 0, sy:0, x: 100, y: 100, ex:100, ey:0 },
+
+// Quadratic Bézier Curve
+{d:'Q', sx: 0, sy:0, x: 50, y: 100, ex:100, ey:0}
+
+// Arc
+{d:'A', sx: 0, sy:100,  ex:100, ey:100, rx:10, ry: 10, angle: 180, arc: 1, sweep: 1}
+
+// Z - Close Path no parameters
+{d:'Z'}
+
+sx = start % x position
+x = center % x position
+ex = end % x position
+
+sy = start % y position
+y = center % y position
+ey = end % y position
+
+These three extra options can be added:
+minshow: 0.2  // Values 0 to 1 - Default 0
+maxshow: 1 // Values 0 to 1 - Default 1
+normalize: true // Normalize value y to 1. - Default false
+Example: 
+{d:'H', sx:10, y:90, ex:90, minshow: 0.4, maxshow: 0.6, normalize: true} // Only for y > 0.4 && y < 0.6
+
+For arc view: https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/d#elliptical_arc_curve
+
+            </xmp></code></pre>
+        </div>
+        <br>
+        <h4>Polar Options</h4>
+
+        <table >
+            <thead>
+                <th>
+                    Option
+                </th>
+                <th>
+                    Default
+                </th>
+                <th>
+                    Description
+                </th>
+            </thead>
+            <tr>
+                <td>
+                    channel
+                </td>
+                <td>
+                    0
+                </td>
+                <td>
+                    Channel audio for generate wave
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    samples
+                </td>
+                <td>
+                    length
+                </td>
+                <td>
+                    Length of the data
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    distance
+                </td>
+                <td>
+                    50
+                </td>
+                <td>
+                    Distance from center
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    length
+                </td>
+                <td>
+                    100
+                </td>
+                <td>
+                    Length of wave
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    top
+                </td>
+                <td>
+                    0
+                </td>
+                <td>
+                    Top margin from path to svg
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    left
+                </td>
+                <td>
+                    0
+                </td>
+                <td>
+                    Left margin from path to svg
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    type
+                </td>
+                <td>
+                    'steps'
+                </td>
+                <td>
+                    'steps', 'mirror' or 'bars'
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    startdeg
+                </td>
+                <td>
+                    0
+                </td>
+                <td>
+                    Where do you start drawing. To make it natural, 0 is equivalent to north.
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    enddeg
+                </td>
+                <td>
+                    360
+                </td>
+                <td>
+                    Where do you end drawing
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    invertdeg
+                </td>
+                <td>
+                    false
+                </td>
+                <td>
+                    Reverse the direction of the degrees
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    invertpath
+                </td>
+                <td>
+                    false
+                </td>
+                <td>
+                    Reverse the path vertically
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    paths
+                </td>
+                <td>
+                    [{d:'Q', sdeg: 0, sr:0, deg: 50, r: 100, edeg:100, er:0}]
+                </td>
+                <td>
+                    Array of commands to create the path.
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    animation
+                </td>
+                <td>
+                    false
+                </td>
+                <td>
+                    To create animations, paths separated by commas
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    animationframes
+                </td>
+                <td>
+                    10
+                </td>
+                <td>
+                    Frames per second of the animation
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    normalize
+                </td>
+                <td>
+                    true
+                </td>
+                <td>
+                    Normalize audio to adjust waveform
+                </td>
+            </tr>
+        </table>
+
+        <h4>Polar Path Options</h4>
+
+        <div class="codebox" >
+            <div class="preheader">
+                <svg xmlns="http://www.w3.org/2000/svg" width="54" height="14" viewBox="0 0 54 14"><g fill="none" fill-rule="evenodd" transform="translate(1 1)"><circle cx="6" cy="6" r="6" fill="#FF5F56" stroke="#E0443E" stroke-width=".5"></circle><circle cx="26" cy="6" r="6" fill="#FFBD2E" stroke="#DEA123" stroke-width=".5"></circle><circle cx="46" cy="6" r="6" fill="#27C93F" stroke="#1AAB29" stroke-width=".5"></circle></g></svg>
+            </div>
+            <pre><code class="language-javascript">
+<xmp>// Lineto
+{d:'L', sdeg:0, sr:0,  edeg:100, er:100 },
+
+// Cubic Bézier Curve - Not 100%
+{d:'C', sdeg: 0, sr:0, deg: 50, r: 100, edeg:100, er:0}
+
+// Quadratic Bézier Curve
+{d:'Q', sdeg: 0, sr:0, deg: 50, r: 100, edeg:100, er:0}
+
+// Arc
+{d:'A', sdeg:80, sr:0, edeg: 0, er:0, rx: 100, ry: 100, angle: 100, arc: 0, sweep: 1 },
+
+// Z - Close Path no parameters
+{d:'Z'}
+
+sdeg = start % deg position
+deg = center % deg position
+edeg = end % deg position
+
+sr = start % radius position
+r = center % radius position
+er = end % radius position
+
+These three extra options can be added:
+minshow: 0.2  // Values 0 to 1 - Default 0
+maxshow: 1 // Values 0 to 1 - Default 1
+normalize: true // Normalize value radius to 1. - Default false
+Example: 
+{d:'Q', sdeg: 0, sr:0, deg: 50, r: 100, edeg:100, er:0, minshow: 0.4, maxshow: 0.6, normalize: true} // Only for y > 0.4 && y < 0.6
+
+For arc view: https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/d#elliptical_arc_curve
+
+            </xmp></code></pre>
+        </div>
+    </div>
+    <footer id="footer">
+        Developed by <a href="https://twitter.com/jerosoler" target="_blank">Jero Soler</a>
+    </footer>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.20.0/prism.min.js" integrity="sha256-3teItwIfMuVB74Alnxw/y5HAZ2irOsCULFff3EgbtEs=" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.20.0/components/prism-css.min.js" integrity="sha256-4ut/7XCv/zjtcNF9GlQL+Jpy3AuQlLt2ExXNtIjZ8Po=" crossorigin="anonymous"></script>
+
+    <script>
+        const resizeWindow = () => {
+            let scale = 1;
+            let scaleRound = 1;
+            if(window.innerWidth < 800) {
+                scale = (window.innerWidth-30)/800;
+            } else {
+                scale = 1;
+            }
+
+            if(window.innerWidth < 400) {
+                scaleRound = (window.innerWidth-20)/400;
+            } else {
+                scaleRound = 1;
+            }
+            document.documentElement.style.setProperty('--scale', scale);
+            document.documentElement.style.setProperty('--scale-round', scaleRound);
+        }
+        window.onresize = resizeWindow;
+        resizeWindow();
+    </script>
+    <script type="module" src="main.js"></script>
+</body>
+</html>
