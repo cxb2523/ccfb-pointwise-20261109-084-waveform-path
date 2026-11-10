@@ -14,7 +14,8 @@
   "scripts": {
     "dev": "vite --host",
     "build": "vite build && cp dist/waveform-path.es.js docs/waveform-path.min.js",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "test": "node --test test/waveform-path.test.mjs"
   },
   "repository": {
     "type": "git",
